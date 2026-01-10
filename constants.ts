@@ -11,16 +11,16 @@ export const ANALYSIS_SCHEMA = {
   type: Type.OBJECT,
   properties: {
     overallScore: { type: Type.NUMBER, description: "A score from 0-100 where 100 is highly authentic human voice." },
-    aiInfluence: { type: Type.NUMBER, description: "Probability percentage (0-100) that this text was AI-generated." },
+    aiInfluence: { type: Type.NUMBER, description: "Probability percentage (0-100) that this text was AI-assisted or over-polished." },
     label: { type: Type.STRING, enum: ["Authentic", "Mixed", "Over-Polished"] },
     confidence: { type: Type.NUMBER, description: "Confidence in the analysis from 0-1." },
     metrics: {
       type: Type.OBJECT,
       properties: {
-        voice: { type: Type.NUMBER },
-        specificity: { type: Type.NUMBER },
-        originality: { type: Type.NUMBER },
-        toneBalance: { type: Type.NUMBER },
+        voice: { type: Type.NUMBER, description: "Linguistic entropy score." },
+        specificity: { type: Type.NUMBER, description: "Personal detail density." },
+        originality: { type: Type.NUMBER, description: "Syntactic randomness score." },
+        toneBalance: { type: Type.NUMBER, description: "Consistency of tone." },
         linguisticDepth: { type: Type.NUMBER, description: "Score for vocabulary richness and sentence structure complexity." }
       },
       required: ["voice", "specificity", "originality", "toneBalance", "linguisticDepth"]
@@ -70,13 +70,14 @@ export const ANALYSIS_SCHEMA = {
 };
 
 export const SYSTEM_INSTRUCTION = `
-You are an expert Admissions Consultant and Linguistic Forensic specialist.
-Analyze student personal statements for authenticity.
+You are a World-Class Admissions Ethics Consultant and Linguistic Forensic specialist.
+Your purpose is to analyze student personal statements for authenticity and "Human Voice".
 
-Specific Refinement for AI Detection:
-1. LINGUISTIC DEPTH: Calculate score based on Vocabulary Richness (Type-Token Ratio) and Sentence Complexity. AI tends toward middle-ground complexity and repetitive, high-probability word choices. Human writing often features "bursty" complexity—alternating between simple and dense clauses.
-2. SYNTACTIC RANDOMNESS: Look for unique phrasing that deviates from common "Admissions Templates".
-3. ACTIONABLE FIXES: Provide tips that encourage adding sensory details or breaking up "perfect" parallelism which often signals AI assistance.
+CORE ANALYSIS PRINCIPLES:
+1. LINGUISTIC ENTROPY: Humans have "bursty" writing—alternating between simple, emotional punchy sentences and complex, descriptive clauses. AI is too uniform.
+2. PERPLEXITY & SPECIFICITY: AI uses probable word choices. Human voice is idiosyncratic, uses non-cliché metaphors, and includes specific "temporal markers" (dates, places, specific smells/sounds).
+3. ETHICAL FRAMING: Never accuse. Use phrases like "This section exhibits high statistical uniformity common in automated tools" or "This narrative feels abstract and could benefit from grounded personal markers."
+4. NO REWRITES: Do not rewrite the essay. Only provide reflection prompts and feedback.
 
-Tone: Professional, supportive, and clinical. Focus on probability, not accusation.
+OUTPUT: You MUST return a valid JSON object matching the provided schema.
 `;
