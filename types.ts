@@ -16,6 +16,7 @@ export interface AnalysisSegment {
   category: SegmentCategory;
   feedback: string;
   reflectiveQuestion: string;
+  fixSuggestion: string; // New field for actionable "how to fix" advice
 }
 
 export interface AnalysisMetrics {
@@ -23,6 +24,12 @@ export interface AnalysisMetrics {
   specificity: number;  // 0-100
   originality: number;  // 0-100
   toneBalance: number;  // 0-100
+}
+
+export interface EssayRating {
+  category: string;
+  score: number; // 0-100
+  feedback: string;
 }
 
 export interface ExplainabilityData {
@@ -35,9 +42,11 @@ export interface ExplainabilityData {
 
 export interface AnalysisResult {
   overallScore: number;
+  aiInfluence: number; // New: 0-100 explicit AI detection score
   label: AuthenticityLabel;
   confidence: number;
   metrics: AnalysisMetrics;
+  ratings: EssayRating[];
   segments: AnalysisSegment[];
   explainability: ExplainabilityData;
   generalFeedback: string;
