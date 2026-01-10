@@ -4,13 +4,15 @@ import { AnalysisResult, AuthenticityLabel, SegmentCategory } from "../types";
 import { APP_CONFIG, ANALYSIS_SCHEMA, SYSTEM_INSTRUCTION } from "../constants";
 
 export const analyzeEssay = async (essay: string): Promise<AnalysisResult> => {
+  // Use current injected key or dialog-selected key
   const apiKey = process.env.API_KEY;
   
   if (!apiKey || apiKey === "undefined" || apiKey.trim().length < 10) {
-    console.warn("Using Local Heuristic Engine v3.2 (Offline Mode).");
+    console.warn("Using Local Heuristic Engine v3.2 (Offline Mode). Key missing or invalid.");
     return performOfflineAnalysis(essay);
   }
 
+  // Mandatory: Create new instance before API call to ensure current key is used
   const ai = new GoogleGenAI({ apiKey: apiKey });
   
   try {
@@ -28,10 +30,16 @@ export const analyzeEssay = async (essay: string): Promise<AnalysisResult> => {
     });
 
     const resultText = response.text;
-    if (!resultText) throw new Error("Cloud Audit Failed.");
+    if (!resultText) throw new Error("Cloud Audit Failed. Response was empty.");
     return JSON.parse(resultText) as AnalysisResult;
   } catch (error: any) {
     console.error("Cloud Forensics Error:", error);
+    
+    // Explicitly handle project not found/expired key to reset UI in App.tsx
+    if (error.message && error.message.includes("Requested entity was not found")) {
+      throw error;
+    }
+    
     return performOfflineAnalysis(essay);
   }
 };
@@ -67,6 +75,13 @@ function performOfflineAnalysis(text: string): AnalysisResult {
   if (overallScore > 85) label = AuthenticityLabel.AUTHENTIC;
   else if (overallScore < 50) label = AuthenticityLabel.OVER_POLISHED;
 
+  const isHighRisk = aiInfluence > 65;
+  const aiFlags = [];
+  if (isHighRisk) {
+    aiFlags.push("Low Lexical Entropy Detected");
+    aiFlags.push("Synthetic Rhythm Pattern");
+  }
+
   const segments = sentences.slice(0, 10).map((s) => ({
     text: s,
     category: SegmentCategory.NEUTRAL,
@@ -79,6 +94,7 @@ function performOfflineAnalysis(text: string): AnalysisResult {
     overallScore: Math.round(overallScore),
     aiInfluence: Math.round(aiInfluence),
     label,
+    isHighRisk,
     confidence: 0.9,
     metrics: {
       voice: Math.round(overallScore),
@@ -99,10 +115,11 @@ function performOfflineAnalysis(text: string): AnalysisResult {
       originalityReasoning: "Vocabulary choices appear idiosyncratic.",
       toneReasoning: "Tone is stable across analyzed segments.",
       richnessReasoning: "Vocabulary range is appropriate for the context.",
-      topContributingFactors: ["Sentence length variation", "Word choice entropy"]
+      topContributingFactors: ["Sentence length variation", "Word choice entropy"],
+      aiFlags
     },
     segments,
-    generalFeedback: "Local analysis complete. For full forensic auditing, ensure your API key is active.",
+    generalFeedback: "Local analysis complete. Forensic Cloud is currently offline.",
     strengths: ["Unique logic flow", "Good lexical variety"]
   };
 }

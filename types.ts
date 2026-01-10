@@ -43,6 +43,7 @@ export interface ExplainabilityData {
   toneReasoning: string;
   richnessReasoning: string; 
   topContributingFactors: string[];
+  aiFlags: string[]; // NEW: Explicit forensic flags for AI detection
 }
 
 export interface AnalysisResult {
@@ -56,6 +57,7 @@ export interface AnalysisResult {
   explainability: ExplainabilityData;
   generalFeedback: string;
   strengths: string[];
+  isHighRisk?: boolean; // NEW: Flag for high AI probability
 }
 
 export interface AppState {

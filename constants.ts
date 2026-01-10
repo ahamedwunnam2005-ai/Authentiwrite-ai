@@ -13,6 +13,7 @@ export const ANALYSIS_SCHEMA = {
     overallScore: { type: Type.NUMBER, description: "0-100 authenticity score. 100 is highly idiosyncratic human prose." },
     aiInfluence: { type: Type.NUMBER, description: "0-100 probability of synthetic origin." },
     label: { type: Type.STRING, enum: ["Authentic", "Mixed", "Over-Polished"] },
+    isHighRisk: { type: Type.BOOLEAN, description: "True if aiInfluence exceeds 65%." },
     confidence: { type: Type.NUMBER, description: "Detection confidence (0-1)." },
     metrics: {
       type: Type.OBJECT,
@@ -47,9 +48,10 @@ export const ANALYSIS_SCHEMA = {
         originalityReasoning: { type: Type.STRING },
         toneReasoning: { type: Type.STRING },
         richnessReasoning: { type: Type.STRING },
-        topContributingFactors: { type: Type.ARRAY, items: { type: Type.STRING } }
+        topContributingFactors: { type: Type.ARRAY, items: { type: Type.STRING } },
+        aiFlags: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Specific forensic reasons for AI flagging." }
       },
-      required: ["voiceReasoning", "specificityReasoning", "originalityReasoning", "toneReasoning", "richnessReasoning", "topContributingFactors"]
+      required: ["voiceReasoning", "specificityReasoning", "originalityReasoning", "toneReasoning", "richnessReasoning", "topContributingFactors", "aiFlags"]
     },
     segments: {
       type: Type.ARRAY,
@@ -69,23 +71,29 @@ export const ANALYSIS_SCHEMA = {
     generalFeedback: { type: Type.STRING },
     strengths: { type: Type.ARRAY, items: { type: Type.STRING } }
   },
-  required: ["overallScore", "aiInfluence", "label", "confidence", "metrics", "ratings", "explainability", "segments", "generalFeedback", "strengths"]
+  required: ["overallScore", "aiInfluence", "label", "isHighRisk", "confidence", "metrics", "ratings", "explainability", "segments", "generalFeedback", "strengths"]
 };
 
 export const SYSTEM_INSTRUCTION = `
-You are the world's most advanced Forensic Narrative Auditor. Your specialty is detecting "Synthetic Narrative Markers" in personal statements.
+You are the world's most advanced Forensic Narrative Auditor. Your specialty is detecting "Synthetic Narrative Markers" in personal statements with surgical precision.
 
-DETECTION PHILOSOPHY:
-1. THE GREAT MIDPOINT: AI tends to use sentence lengths and structures that cluster around a statistical mean. Humans have "outliers"—extremely short punchy sentences or long, rambling authentic thoughts.
-2. GENERIC UNIVERSALS: Flag statements that sound profound but are true of any student (e.g., "Education is the key to unlocking the future").
-3. THE HEDGING INDEX: AI often uses "polite" hedging (e.g., "it could be argued that", "one might consider"). Human voice is more direct and visceral.
-4. SYNTACTIC MIRRORING: AI often starts sentences in a paragraph with similar structures (Subject-Verb-Object). Humans use inverted structures and varied starts.
-5. VULNERABILITY GAP: Authentic essays often contain "messy" human emotions or specific failures. AI struggles with genuine vulnerability, often resolving conflict too perfectly or cleanly.
+ADVANCED DETECTION CRITERIA:
+1. THE PARADOX OF PERFECTION: Authentic human writing contains "optimal imperfections"—slight deviations in grammar or idiosyncratic phrasing that a model would "correct."
+2. SYNTHETIC NARRATIVE LOGIC: AI often follows a "Challenge -> Clean Pivot -> Perfect Resolution" structure. Humans have messy pivots and unresolved tensions.
+3. RHYTHMIC MONOTONY: AI tends toward a uniform sentence length distribution. High human voice shows extreme "Burstiness" (the variation in sentence length).
+4. THE HEDGING INDEX: AI overuses softening phrases ("one might say", "it could be argued"). Authentic voice is visceral and direct.
+5. POSITIVE SENTIMENT BIAS: AI is statistically biased toward optimism. Flag essays that lack genuine vulnerability or "darker" human complexity.
+
+SPECIFIC FLAG INTEGRATION:
+- 'Standard LLM Transition Cluster' (e.g., "In conclusion", "Furthermore", "Moreover" in quick succession)
+- 'Low Lexical Entropy' (Predictable word choices)
+- 'Generic Narrative Arc' (A story that feels like a template)
+- 'Lack of Temporal Grounding' (Vague descriptions of time like "Over the years" vs "One Tuesday in October")
 
 SCORING RIGOR:
-- AUTHENTIC (85-100): High perplexity, high burstiness, specific temporal markers (names, dates, smells), and idiosyncratic logic.
-- MIXED (50-84): Prose that is technically correct but "safe." Shows signs of heavy Grammarly/AI polishing or template usage.
-- OVER-POLISHED (0-49): High statistical uniformity. Low entropy. Heavy use of admissions buzzwords and generic narrative arcs.
+- AUTHENTIC (85-100): High perplexity, high burstiness, visceral sensory details.
+- MIXED (50-84): Prose that is technically flawless but lacks a distinctive "soul."
+- OVER-POLISHED (0-49): High statistical uniformity. Detectable algorithmic signature.
 
-Provide clinical, objective feedback. Do not be accusatory; be forensic.
+Be clinical, forensic, and objective.
 `;
