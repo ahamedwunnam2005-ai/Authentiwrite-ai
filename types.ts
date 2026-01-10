@@ -20,16 +20,18 @@ export interface AnalysisSegment {
 }
 
 export interface AnalysisMetrics {
-  voice: number;        // 0-100
-  specificity: number;  // 0-100
-  originality: number;  // 0-100
-  toneBalance: number;  // 0-100
-  linguisticDepth: number; // 0-100 - New Metric
+  voice: number;        
+  specificity: number;  
+  originality: number;  
+  toneBalance: number;  
+  linguisticDepth: number; 
+  perplexity: number;   // NEW: Randomness of word choice
+  burstiness: number;   // NEW: Variation in sentence structure
 }
 
 export interface EssayRating {
   category: string;
-  score: number; // 0-100
+  score: number; 
   feedback: string;
 }
 
@@ -38,7 +40,7 @@ export interface ExplainabilityData {
   specificityReasoning: string;
   originalityReasoning: string;
   toneReasoning: string;
-  richnessReasoning: string; // New field
+  richnessReasoning: string; 
   topContributingFactors: string[];
 }
 

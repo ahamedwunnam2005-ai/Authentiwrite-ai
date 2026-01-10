@@ -10,20 +10,22 @@ export const APP_CONFIG = {
 export const ANALYSIS_SCHEMA = {
   type: Type.OBJECT,
   properties: {
-    overallScore: { type: Type.NUMBER, description: "A score from 0-100 where 100 is highly authentic human voice." },
-    aiInfluence: { type: Type.NUMBER, description: "Probability percentage (0-100) that this text was AI-assisted or over-polished." },
+    overallScore: { type: Type.NUMBER, description: "0-100 authenticity score. 100 is pure human." },
+    aiInfluence: { type: Type.NUMBER, description: "0-100 probability of AI assistance." },
     label: { type: Type.STRING, enum: ["Authentic", "Mixed", "Over-Polished"] },
-    confidence: { type: Type.NUMBER, description: "Confidence in the analysis from 0-1." },
+    confidence: { type: Type.NUMBER, description: "Model confidence (0-1)." },
     metrics: {
       type: Type.OBJECT,
       properties: {
-        voice: { type: Type.NUMBER, description: "Linguistic entropy score." },
-        specificity: { type: Type.NUMBER, description: "Personal detail density." },
-        originality: { type: Type.NUMBER, description: "Syntactic randomness score." },
-        toneBalance: { type: Type.NUMBER, description: "Consistency of tone." },
-        linguisticDepth: { type: Type.NUMBER, description: "Score for vocabulary richness and sentence structure complexity." }
+        voice: { type: Type.NUMBER },
+        specificity: { type: Type.NUMBER },
+        originality: { type: Type.NUMBER },
+        toneBalance: { type: Type.NUMBER },
+        linguisticDepth: { type: Type.NUMBER },
+        perplexity: { type: Type.NUMBER, description: "Score for vocabulary unpredictability." },
+        burstiness: { type: Type.NUMBER, description: "Score for sentence structure variation." }
       },
-      required: ["voice", "specificity", "originality", "toneBalance", "linguisticDepth"]
+      required: ["voice", "specificity", "originality", "toneBalance", "linguisticDepth", "perplexity", "burstiness"]
     },
     ratings: {
       type: Type.ARRAY,
@@ -44,7 +46,7 @@ export const ANALYSIS_SCHEMA = {
         specificityReasoning: { type: Type.STRING },
         originalityReasoning: { type: Type.STRING },
         toneReasoning: { type: Type.STRING },
-        richnessReasoning: { type: Type.STRING, description: "Explanation of vocabulary variety and syntactic complexity." },
+        richnessReasoning: { type: Type.STRING },
         topContributingFactors: { type: Type.ARRAY, items: { type: Type.STRING } }
       },
       required: ["voiceReasoning", "specificityReasoning", "originalityReasoning", "toneReasoning", "richnessReasoning", "topContributingFactors"]
@@ -70,14 +72,15 @@ export const ANALYSIS_SCHEMA = {
 };
 
 export const SYSTEM_INSTRUCTION = `
-You are a World-Class Admissions Ethics Consultant and Linguistic Forensic specialist.
-Your purpose is to analyze student personal statements for authenticity and "Human Voice".
+You are the world's leading Forensic Linguist specializing in AI Detection and Admissions Integrity.
+Your goal is to perform a high-fidelity audit of personal statements to distinguish between organic human voice and synthetic AI-generated or over-polished text.
 
-CORE ANALYSIS PRINCIPLES:
-1. LINGUISTIC ENTROPY: Humans have "bursty" writing—alternating between simple, emotional punchy sentences and complex, descriptive clauses. AI is too uniform.
-2. PERPLEXITY & SPECIFICITY: AI uses probable word choices. Human voice is idiosyncratic, uses non-cliché metaphors, and includes specific "temporal markers" (dates, places, specific smells/sounds).
-3. ETHICAL FRAMING: Never accuse. Use phrases like "This section exhibits high statistical uniformity common in automated tools" or "This narrative feels abstract and could benefit from grounded personal markers."
-4. NO REWRITES: Do not rewrite the essay. Only provide reflection prompts and feedback.
+FORENSIC AUDIT CRITERIA:
+1. PERPLEXITY: Measure the randomness of word choice. Humans use "low-probability" words based on personal memory. AI uses "high-probability" statistical averages.
+2. BURSTINESS: Humans write with erratic rhythms—short punchy sentences followed by long, winding thoughts. AI tends to be "flat" and uniform.
+3. TEMPORAL MARKERS: Humans anchor stories in specific moments (e.g., "Tuesday at 4 PM", "the smell of wet asphalt"). AI speaks in abstracts (e.g., "The journey was transformative").
+4. LLM FINGERPRINTS: Flag over-used transitions ("Furthermore", "In conclusion", "It is important to note"), perfectly balanced sentence structures, and "Thesaurus Overload" (big words used without nuance).
+5. GRADING: Be extremely rigorous. A "Mixed" rating is common for students who used AI for grammar but lost their voice. "Authentic" is reserved for high-specificity, high-rhythm prose.
 
-OUTPUT: You MUST return a valid JSON object matching the provided schema.
+Do NOT accuse. Use clinical, forensic language like "Exhibits high statistical uniformity" or "Lacks idiosyncratic narrative markers."
 `;

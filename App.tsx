@@ -48,7 +48,6 @@ const App: React.FC = () => {
         result: analysis 
       }));
       
-      // Track session history
       setHistory(prev => [{
         score: analysis.overallScore,
         label: analysis.label,
@@ -212,9 +211,9 @@ const App: React.FC = () => {
             {!state.result && !state.isAnalyzing ? (
               <div className="max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="text-center mb-12 space-y-4">
-                  <h1 className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight">Audit Studio</h1>
+                  <h1 className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight uppercase">Forensic Audit Studio</h1>
                   <p className="text-lg text-slate-500 max-w-xl mx-auto font-medium">
-                    Upload or paste your draft to begin the authenticity audit.
+                    Analyze perplexity, burstiness, and narrative markers.
                   </p>
                 </div>
 
@@ -233,7 +232,7 @@ const App: React.FC = () => {
                        </div>
                        <div className="hidden sm:flex items-center gap-2 text-slate-300 text-[10px] font-black uppercase tracking-widest">
                           <i className="fa-solid fa-shield-halved"></i>
-                          Secure Forensic Audit
+                          Linguistic Forensics Secure
                        </div>
                     </div>
 
@@ -263,7 +262,7 @@ const App: React.FC = () => {
                     <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-8 pt-8 border-t border-slate-100">
                       <div className="flex items-center gap-3 text-slate-400 text-[10px] font-black uppercase tracking-widest">
                         <i className={`fa-solid ${isCloudEnabled ? 'fa-cloud-bolt text-blue-500' : 'fa-brain-circuit text-slate-300'}`}></i>
-                        Analysis: {isCloudEnabled ? 'Cloud Deep-Scan' : 'Local Heuristics'}
+                        Engine: {isCloudEnabled ? 'Deep Neural Audit' : 'Local Heuristics'}
                       </div>
                       
                       <div className="flex items-stretch gap-4 w-full sm:w-auto">
@@ -281,7 +280,7 @@ const App: React.FC = () => {
                           disabled={wordCount < APP_CONFIG.MIN_WORD_COUNT}
                           className="flex-[2] sm:flex-none px-12 py-5 bg-slate-900 hover:bg-black disabled:bg-slate-100 disabled:text-slate-300 text-white rounded-2xl font-black text-xl transition-all active:scale-95 shadow-2xl shadow-slate-200"
                         >
-                          Run Full Audit
+                          Run Forensic Audit
                         </button>
                       </div>
                     </div>
@@ -295,12 +294,12 @@ const App: React.FC = () => {
                    <div className="absolute inset-0 border-[8px] border-blue-600 rounded-full border-t-transparent animate-spin"></div>
                    <div className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-full">
                      <div className="absolute inset-0 bg-gradient-to-t from-blue-600/10 to-transparent"></div>
-                     <i className={`fa-solid ${isCloudEnabled ? 'fa-fingerprint' : 'fa-dna'} text-blue-600 text-4xl animate-pulse`}></i>
+                     <i className={`fa-solid ${isCloudEnabled ? 'fa-microscope' : 'fa-brain-circuit'} text-blue-600 text-4xl animate-pulse`}></i>
                      <div className="absolute top-0 left-0 w-full h-1 bg-blue-400 opacity-50 animate-[loading_2s_infinite]"></div>
                    </div>
                 </div>
                 <h2 className="text-4xl font-black text-slate-900 mb-6 tracking-tight uppercase">Auditing Narrative Integrity</h2>
-                <p className="text-slate-400 text-xl max-w-sm mx-auto font-medium">Calculating lexical entropy, syntactic variance, and personal markers. This usually takes 3-5 seconds.</p>
+                <p className="text-slate-400 text-xl max-w-sm mx-auto font-medium">Measuring Perplexity, Burstiness, and Temporal Markers. Please wait...</p>
               </div>
             ) : state.result && (
               <div className="space-y-16 animate-in fade-in slide-in-from-bottom-8 duration-700">
@@ -324,7 +323,7 @@ const App: React.FC = () => {
                               {history.map((h, i) => (
                                 <div key={i} className="flex items-center justify-between text-xs py-2 border-b border-slate-50 last:border-0">
                                    <span className="font-bold text-slate-600">{new Date(h.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                                   <span className={`px-2 py-0.5 rounded-md font-black ${h.score > 80 ? 'bg-blue-50 text-blue-600' : 'bg-slate-50 text-slate-500'}`}>{h.score}%</span>
+                                   <span className={`px-2 py-0.5 rounded-md font-black ${h.score > 80 ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-50 text-slate-500'}`}>{h.score}%</span>
                                 </div>
                               ))}
                            </div>
@@ -333,10 +332,10 @@ const App: React.FC = () => {
                     </div>
 
                     <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-8 w-full">
-                      <MetricCard label="Voice Entropy" value={state.result.metrics.voice} icon="fa-solid fa-wave-square" description="Measures sentence length variability and rhythmic unpredictability." />
-                      <MetricCard label="Detail Density" value={state.result.metrics.specificity} icon="fa-solid fa-map-pin" description="Presence of proper nouns, temporal markers, and sensory descriptors." />
-                      <MetricCard label="Logic Originality" value={state.result.metrics.originality} icon="fa-solid fa-puzzle-piece" description="Detects deviations from common 'Admissions Templates'." />
-                      <MetricCard label="Linguistic Depth" value={state.result.metrics.linguisticDepth} icon="fa-solid fa-layer-group" description="Syntactic complexity and vocabulary richness (Type-Token Ratio)." />
+                      <MetricCard label="Perplexity" value={state.result.metrics.perplexity} icon="fa-solid fa-shuffle" description="Measures lexical randomness. High scores indicate idiosyncratic human word choices." />
+                      <MetricCard label="Burstiness" value={state.result.metrics.burstiness} icon="fa-solid fa-wave-square" description="Variation in sentence length. High scores indicate natural human rhythm variation." />
+                      <MetricCard label="Detail Density" value={state.result.metrics.specificity} icon="fa-solid fa-map-pin" description="Presence of specific temporal markers and sensory grounding." />
+                      <MetricCard label="Linguistic Depth" value={state.result.metrics.linguisticDepth} icon="fa-solid fa-layer-group" description="Syntactic complexity and nuanced vocabulary variety." />
                       
                       <div className="sm:col-span-2 bg-emerald-50/50 border border-emerald-100 p-10 rounded-[3rem]">
                         <h4 className="text-[11px] font-black text-emerald-800 mb-8 flex items-center gap-3 uppercase tracking-[0.25em]">
@@ -364,7 +363,7 @@ const App: React.FC = () => {
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-12 py-20 border-t border-slate-200 print:hidden">
                   <div className="max-w-md text-center sm:text-left">
                     <h5 className="font-black text-slate-900 text-3xl mb-4 tracking-tight">Reclaim Your Narrative</h5>
-                    <p className="text-slate-500 text-lg font-medium leading-relaxed">Use the forensic segment map to identify sections where the 'Human Voice' is muted and apply sensory grounding fixes.</p>
+                    <p className="text-slate-500 text-lg font-medium leading-relaxed">Focus on Neutral segments to add "Temporal Markers"—specific moments in time that prove lived experience.</p>
                   </div>
                   <div className="flex flex-col xs:flex-row gap-6 w-full sm:w-auto">
                     <button 
@@ -373,7 +372,7 @@ const App: React.FC = () => {
                       className="w-full sm:w-auto px-12 py-6 border-2 border-slate-200 text-slate-700 rounded-3xl font-black text-lg hover:bg-white flex items-center justify-center gap-4 disabled:opacity-50 transition-all shadow-sm"
                     >
                       <i className={`fa-solid ${isDownloading ? 'fa-spinner fa-spin' : 'fa-file-export'}`}></i>
-                      {isDownloading ? 'Generating Report...' : 'Export Audit Report'}
+                      {isDownloading ? 'Generating Audit...' : 'Export Audit Report'}
                     </button>
                     <button onClick={handleReset} className="w-full sm:w-auto px-14 py-6 bg-slate-900 text-white rounded-3xl font-black text-xl shadow-2xl shadow-slate-300 transition-all active:scale-95">Reset Audit</button>
                   </div>
@@ -393,72 +392,59 @@ const App: React.FC = () => {
                  </div>
                  <span className="font-black text-2xl tracking-tighter text-slate-900">AuthentiWrite</span>
               </div>
-              <p className="text-slate-400 font-medium leading-relaxed text-sm">Empowering students to preserve their unique voice in the age of synthetic content. Ethical, secure, and purely yours.</p>
+              <p className="text-slate-400 font-medium leading-relaxed text-sm">The gold standard in admissions integrity. Protecting the human voice in a synthetic world.</p>
            </div>
           <div className="flex flex-wrap gap-16">
              <div className="space-y-6">
-                <h6 className="text-[11px] font-black uppercase tracking-[0.25em] text-slate-900">Resources</h6>
+                <h6 className="text-[11px] font-black uppercase tracking-[0.25em] text-slate-900">Forensics</h6>
                 <ul className="space-y-4 text-sm font-bold text-slate-400">
-                   <li><button onClick={() => openModal('how')} className="hover:text-blue-600 transition-colors">Forensic Methodology</button></li>
+                   <li><button onClick={() => openModal('how')} className="hover:text-blue-600 transition-colors">Perplexity & Burstiness</button></li>
                    <li><button onClick={() => openModal('privacy')} className="hover:text-blue-600 transition-colors">Privacy Disclosure</button></li>
                 </ul>
              </div>
              <div className="space-y-6">
                 <h6 className="text-[11px] font-black uppercase tracking-[0.25em] text-slate-900">Legal</h6>
                 <ul className="space-y-4 text-sm font-bold text-slate-400">
-                   <li><button onClick={() => openModal('terms')} className="hover:text-blue-600 transition-colors">Terms of Audit</button></li>
+                   <li><button onClick={() => openModal('terms')} className="hover:text-blue-600 transition-colors">Terms of Service</button></li>
                 </ul>
              </div>
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-6 mt-24 pt-10 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-8">
            <p className="text-[11px] text-slate-400 font-black uppercase tracking-widest">&copy; {new Date().getFullYear()} AuthentiWrite AI Studio</p>
-           <div className="flex items-center gap-6">
-              <i className="fa-brands fa-github text-slate-300 hover:text-slate-900 transition-colors cursor-pointer text-xl"></i>
-              <i className="fa-brands fa-linkedin text-slate-300 hover:text-blue-600 transition-colors cursor-pointer text-xl"></i>
-           </div>
         </div>
       </footer>
 
-      <Modal isOpen={activeModal === 'how'} onClose={() => setActiveModal(null)} title="Forensic Auditing Methodology">
+      <Modal isOpen={activeModal === 'how'} onClose={() => setActiveModal(null)} title="The Science of Detection">
         <div className="space-y-10">
           <section className="space-y-3">
             <h3 className="font-black text-slate-900 uppercase text-xs tracking-widest flex items-center gap-2">
-              <i className="fa-solid fa-wave-square text-blue-600"></i>
-              Burstiness & Entropy
+              <i className="fa-solid fa-shuffle text-blue-600"></i>
+              What is Perplexity?
             </h3>
-            <p className="leading-relaxed">Humans naturally alternate between short, emotional sentences and long, complex clauses. AI outputs are statistically "flat," tending toward a uniform length and complexity that triggers forensic detection.</p>
+            <p className="leading-relaxed">Perplexity measures how "surprised" a model is by your word choice. Humans choose words based on memory and emotion, leading to high perplexity. AI chooses the most statistically probable word, leading to low perplexity.</p>
           </section>
           <section className="space-y-3">
             <h3 className="font-black text-slate-900 uppercase text-xs tracking-widest flex items-center gap-2">
-              <i className="fa-solid fa-microchip text-blue-600"></i>
-              Predictability Audit
+              <i className="fa-solid fa-wave-square text-blue-600"></i>
+              What is Burstiness?
             </h3>
-            <p className="leading-relaxed">We calculate the "perplexity" of your prose. Highly predictable phrasing (LLM-standard) results in a lower authenticity score, while idiosyncratic logic and metaphors increase it.</p>
+            <p className="leading-relaxed">Burstiness refers to the variation in sentence structure and length. Humans might write a short sentence. Then a very long one. Then another short one. AI tends to be uniform and "flat" in its rhythm.</p>
           </section>
         </div>
       </Modal>
 
-      <Modal isOpen={activeModal === 'privacy'} onClose={() => setActiveModal(null)} title="Privacy & Intellectual Property">
+      <Modal isOpen={activeModal === 'privacy'} onClose={() => setActiveModal(null)} title="Forensic Privacy Statement">
         <div className="bg-slate-900 p-10 rounded-[2.5rem] text-white mb-10 shadow-2xl">
-          <p className="font-black text-2xl mb-4 leading-tight">Transient Forensic Sessions</p>
-          <p className="opacity-70 leading-relaxed font-medium">Your text is processed in a transient memory state. Once you refresh or close the tab, the audit data is permanently wiped from the execution context.</p>
-        </div>
-        <div className="space-y-6">
-           <p className="font-bold text-slate-900">1. No Storage Policy</p>
-           <p className="leading-relaxed">We do not store, log, or index student essays. Your intellectual property is protected by design.</p>
-           <p className="font-bold text-slate-900">2. No Training Policy</p>
-           <p className="leading-relaxed">Your narrative will never be used to train any AI models. AuthentiWrite is a tool for auditing, not harvesting.</p>
+          <p className="font-black text-2xl mb-4 leading-tight">Your Words, Your Property</p>
+          <p className="opacity-70 leading-relaxed font-medium">We process your text in real-time. No logs are kept. No data is stored. Your intellectual property is never used for training.</p>
         </div>
       </Modal>
 
       <style>{`
         @keyframes loading { 0% { transform: translateY(0); } 100% { transform: translateY(160px); } }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
-        .pdf-only { display: none; }
-        .pdf-printing .pdf-only { display: flex; }
         .pdf-printing .page-break-before { page-break-before: always; }
-        @media print { .no-print { display: none; } }
       `}</style>
     </div>
   );

@@ -6,9 +6,8 @@ import { APP_CONFIG, ANALYSIS_SCHEMA, SYSTEM_INSTRUCTION } from "../constants";
 export const analyzeEssay = async (essay: string): Promise<AnalysisResult> => {
   const apiKey = process.env.API_KEY;
   
-  // Robust check for missing or default/invalid API key strings
   if (!apiKey || apiKey === "undefined" || apiKey.trim().length < 10) {
-    console.warn("Active Cloud API Key not found. Initiating Local Heuristic Engine v3.1.");
+    console.warn("Using Local Heuristic Engine v3.2 (Offline Mode).");
     return performOfflineAnalysis(essay);
   }
 
@@ -18,7 +17,7 @@ export const analyzeEssay = async (essay: string): Promise<AnalysisResult> => {
     const response = await ai.models.generateContent({
       model: APP_CONFIG.MODEL_NAME,
       contents: [{
-        parts: [{ text: `Forensic Authenticity Audit Request:\n\nAnalyze the following personal statement for linguistic variability, temporal markers, and idiosyncratic logic. Be specific in segment analysis.\n\nEssay:\n${essay}` }]
+        parts: [{ text: `Forensic Narrative Integrity Audit:\n\nAnalyze for synthetic patterns, lexical entropy, and temporal markers.\n\nEssay:\n${essay}` }]
       }],
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
@@ -29,96 +28,81 @@ export const analyzeEssay = async (essay: string): Promise<AnalysisResult> => {
     });
 
     const resultText = response.text;
-    if (!resultText) throw new Error("Cloud Analysis returned empty result.");
+    if (!resultText) throw new Error("Cloud Audit Failed.");
     return JSON.parse(resultText) as AnalysisResult;
   } catch (error: any) {
-    console.error("Cloud Forensics Encountered an Error:", error);
-    // Silent failover to local engine for seamless UX
+    console.error("Cloud Forensics Error:", error);
     return performOfflineAnalysis(essay);
   }
 };
 
-/**
- * World-class client-side linguistic heuristic engine (Local Mode).
- * Evaluates prose using statistical properties, burstiness, and marker density.
- */
 function performOfflineAnalysis(text: string): AnalysisResult {
   const sentences = text.match(/[^\.!\?]+[\.!\?]+/g) || [text];
   const words = text.split(/\s+/).filter(w => w.length > 0);
   
-  // 1. Rhythmic Entropy (Sentence Length Variance)
+  // Rhythmic Entropy (Sentence Length Variance) -> BURSTINESS
   const lengths = sentences.map(s => s.trim().split(/\s+/).length);
   const avgLength = lengths.reduce((a, b) => a + b, 0) / lengths.length;
   const variance = lengths.reduce((a, b) => a + Math.pow(b - avgLength, 2), 0) / lengths.length;
-  const entropyScore = Math.min(100, Math.max(15, (variance / 45) * 100));
+  const burstiness = Math.min(100, Math.max(15, (variance / 50) * 100));
 
-  // 2. Specificity (Density of proper nouns, numbers, and sensory verbs)
+  // Lexical Diversity -> PERPLEXITY
+  const uniqueWords = new Set(words.map(w => w.toLowerCase())).size;
+  const ttr = (uniqueWords / words.length) * 100;
+  const perplexity = Math.min(100, Math.max(20, ttr * 1.5));
+
+  // Specificity Markers
   const properNouns = (text.match(/[A-Z][a-z]+/g) || []).length;
-  const numbers = (text.match(/\d+/g) || []).length;
-  const sensoryVerbs = (text.match(/(smell|heard|felt|saw|tasted|scent|echo|shimmer|tangible|visceral|clank|whistle|shiver)/gi) || []).length;
-  const specificityScore = Math.min(100, ((properNouns + (numbers * 2) + (sensoryVerbs * 5)) / words.length) * 450);
+  const specificityScore = Math.min(100, ((properNouns * 10) / words.length) * 100);
 
-  // 3. Over-Polishing (Admissions Buzzword Check)
-  const buzzwords = ["passionate", "multifaceted", "transformative", "embark", "delve", "pave the way", "plethora", "catalyst", "foster", "synergy", "dynamic", "pinnacle", "underscore"];
+  // Over-Polishing
+  const buzzwords = ["passionate", "transformative", "furthermore", "essential", "dynamic", "pinnacle"];
   const buzzCount = buzzwords.filter(bw => text.toLowerCase().includes(bw)).length;
-  const polishPenalty = Math.min(60, buzzCount * 8);
+  const polishPenalty = Math.min(60, buzzCount * 10);
 
-  // Calculate Final Metric Scores
-  const overallScore = Math.max(0, Math.min(100, (entropyScore * 0.45 + specificityScore * 0.45 + 50) - polishPenalty));
-  const aiInfluence = Math.max(0, 100 - overallScore + (polishPenalty * 0.5));
+  const overallScore = Math.max(0, Math.min(100, (burstiness * 0.4 + perplexity * 0.4 + specificityScore * 0.2) - (polishPenalty * 0.5)));
+  const aiInfluence = Math.max(0, 100 - overallScore + (polishPenalty * 0.3));
 
   let label = AuthenticityLabel.MIXED;
-  if (overallScore > 84) label = AuthenticityLabel.AUTHENTIC;
-  else if (overallScore < 52) label = AuthenticityLabel.OVER_POLISHED;
+  if (overallScore > 85) label = AuthenticityLabel.AUTHENTIC;
+  else if (overallScore < 50) label = AuthenticityLabel.OVER_POLISHED;
 
-  // Generate Segments for Heatmap
-  const segments = sentences.slice(0, 12).map((s, i) => {
-    const sWords = s.trim().split(/\s+/).length;
-    let category = SegmentCategory.NEUTRAL;
-    
-    if (sWords > avgLength * 1.6 || sWords < 6) category = SegmentCategory.STRONG_HUMAN;
-    if (buzzwords.some(bw => s.toLowerCase().includes(bw)) && sWords < avgLength * 1.3) category = SegmentCategory.OVER_POLISHED;
-
-    return {
-      text: s,
-      category,
-      feedback: category === SegmentCategory.STRONG_HUMAN 
-        ? "Excellent rhythmic variety detected. The sentence length suggests an organic drafting process." 
-        : category === SegmentCategory.OVER_POLISHED 
-          ? "Uses common 'Admissions Buzzwords' that can sound standardized. Focus on your unique logic."
-          : "Functional prose. Provides clarity but could benefit from grounded personal markers.",
-      reflectiveQuestion: "What specific smell, sound, or physical texture was present at the exact moment this happened?",
-      fixSuggestion: "Replace abstract emotional descriptors (like 'I was happy') with concrete actions (like 'My shoulders finally dropped')."
-    };
-  });
+  const segments = sentences.slice(0, 10).map((s) => ({
+    text: s,
+    category: SegmentCategory.NEUTRAL,
+    feedback: "Analyzing sentence structure for synthetic markers.",
+    reflectiveQuestion: "How would you describe this moment to a friend in person?",
+    fixSuggestion: "Try to inject a sensory detail (sight, sound, smell) here."
+  }));
 
   return {
     overallScore: Math.round(overallScore),
     aiInfluence: Math.round(aiInfluence),
     label,
-    confidence: 0.92,
+    confidence: 0.9,
     metrics: {
-      voice: Math.round(entropyScore),
+      voice: Math.round(overallScore),
       specificity: Math.round(specificityScore),
-      originality: Math.round(Math.max(45, entropyScore * 0.88)),
-      toneBalance: 90,
-      linguisticDepth: Math.round(Math.min(100, (properNouns / words.length) * 1150 + 30))
+      originality: Math.round(perplexity),
+      toneBalance: 85,
+      linguisticDepth: Math.round(ttr),
+      perplexity: Math.round(perplexity),
+      burstiness: Math.round(burstiness)
     },
     ratings: [
-      { category: "Rhythmic Variance", score: Math.round(entropyScore), feedback: "Your use of varying sentence lengths mirrors the natural cadence of human speech." },
-      { category: "Sensory Detail Density", score: Math.round(specificityScore), feedback: "Grounding your narrative in specific places and actions increases narrative trust." },
-      { category: "Vocabulary Authenticity", score: Math.round(100 - polishPenalty), feedback: "By avoiding standardized clichés, your unique personality shines through more clearly." }
+      { category: "Syntactic Variability", score: Math.round(burstiness), feedback: "Measures the human-like variation in sentence structure." },
+      { category: "Lexical Entropy", score: Math.round(perplexity), feedback: "Evaluates the unpredictability of word choices." }
     ],
     explainability: {
-      voiceReasoning: "The text shows healthy signs of 'burstiness'—the natural human tendency to alternate between simple and complex structures.",
-      specificityReasoning: "Proper noun presence and sensory verb density are consistent with first-hand lived experience.",
-      originalityReasoning: "The narrative trajectory avoids common automated templates and predictable logic gates.",
-      toneReasoning: "Consistency of tone is strong, indicating a unified drafting voice without synthetic splicing.",
-      richnessReasoning: "Your vocabulary diversity indicates high-level academic preparation without appearing over-optimized for a thesaurus.",
-      topContributingFactors: ["Sentence length entropy", "Proper noun density", "Low buzzword frequency"]
+      voiceReasoning: "The text shows signs of organic variation.",
+      specificityReasoning: "Markers detected suggest personal narrative.",
+      originalityReasoning: "Vocabulary choices appear idiosyncratic.",
+      toneReasoning: "Tone is stable across analyzed segments.",
+      richnessReasoning: "Vocabulary range is appropriate for the context.",
+      topContributingFactors: ["Sentence length variation", "Word choice entropy"]
     },
     segments,
-    generalFeedback: "Audit complete. Your voice exhibits strong organic variability. The logic structure feels earned rather than synthetically generated.",
-    strengths: ["Unique rhythmic cadence", "Strong sensory grounding", "Consistent emotional markers"]
+    generalFeedback: "Local analysis complete. For full forensic auditing, ensure your API key is active.",
+    strengths: ["Unique logic flow", "Good lexical variety"]
   };
 }
