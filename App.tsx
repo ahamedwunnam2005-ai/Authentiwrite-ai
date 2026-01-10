@@ -25,9 +25,7 @@ declare global {
 
 const App: React.FC = () => {
   const [view, setView] = useState<ViewType>('home');
-  const [isAnonymous, setIsAnonymous] = useState(false);
   const [hasCloudKey, setHasCloudKey] = useState(false);
-  const [history, setHistory] = useState<{score: number, label: string, timestamp: number}[]>([]);
   const [state, setState] = useState<AppState>({
     essay: '',
     isAnalyzing: false,
@@ -75,13 +73,6 @@ const App: React.FC = () => {
         isAnalyzing: false, 
         result: analysis 
       }));
-      
-      setHistory(prev => [{
-        score: analysis.overallScore,
-        label: analysis.label,
-        timestamp: Date.now()
-      }, ...prev].slice(0, 5));
-
     } catch (err: any) {
       if (err.message && err.message.includes("Requested entity was not found")) {
         setHasCloudKey(false);
@@ -183,78 +174,45 @@ const App: React.FC = () => {
 
       {/* ABOUT SECTION - INTEGRATED MISSION TEXT */}
       <section id="about" className="space-y-16 py-12 scroll-mt-24">
-        <div className="flex flex-col md:flex-row gap-12 items-start">
-           <div className="flex-1 space-y-8">
-              <div className="inline-block px-4 py-1 bg-indigo-100 text-indigo-700 rounded-lg text-[10px] font-black uppercase tracking-widest">About AuthentiWrite</div>
-              <h2 className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight">Your Companion for <br/><span className="text-indigo-600">Growth & Integrity.</span></h2>
-              <p className="text-lg text-slate-600 leading-relaxed font-medium">
-                Welcome to AuthentiWrite, your AI-powered companion for improving academic writing with clarity, originality, and confidence. Designed for students, researchers, and lifelong learners, AuthentiWrite provides intuitive tools that guide you in refining essays, reports, and other academic work, all while fostering responsible learning habits.
-              </p>
-              <div className="pt-4 flex flex-col sm:flex-row gap-8 items-start sm:items-center">
-                 <div className="flex items-center gap-4 text-indigo-600 font-black text-xs uppercase tracking-widest">
-                    <i className="fa-solid fa-shield-check text-xl"></i>
-                    Ethical Standards First
-                 </div>
-                 <a href="mailto:authentiwrite@gmail.com" className="flex items-center gap-3 px-6 py-3 bg-white border border-slate-200 rounded-2xl text-slate-900 font-bold hover:bg-slate-50 transition-all shadow-sm group">
-                    <i className="fa-solid fa-envelope text-indigo-500 group-hover:scale-110 transition-transform"></i>
-                    authentiwrite@gmail.com
-                 </a>
-              </div>
-           </div>
-           <div className="flex-1 space-y-6 bg-white p-10 sm:p-12 rounded-[3.5rem] border border-slate-200 shadow-2xl relative overflow-hidden group">
-              <div className="absolute -right-10 -bottom-10 opacity-5 group-hover:scale-125 transition-transform duration-1000">
-                <i className="fa-solid fa-feather-pointed text-[15rem]"></i>
-              </div>
-              <p className="text-slate-500 text-base sm:text-lg leading-relaxed font-medium relative z-10">
-                With real-time feedback, insightful suggestions, and easy-to-understand guidance, our platform helps you enhance your writing skills without compromising ethical standards.
-              </p>
-              <div className="p-6 bg-indigo-50/50 rounded-[2rem] border border-indigo-100/30 relative z-10">
-                 <p className="text-sm text-slate-400 font-medium italic">"Cultivating originality in every draft."</p>
-              </div>
-           </div>
+        <div className="text-center space-y-4">
+          <div className="inline-block px-4 py-1 bg-indigo-100 text-indigo-700 rounded-lg text-[10px] font-black uppercase tracking-widest mb-2">Our Mission & Values</div>
+          <h2 className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight">About AuthentiWrite</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-           <div className="bg-slate-900 text-white p-12 rounded-[3.5rem] shadow-2xl space-y-8 group hover:-translate-y-2 transition-all">
-              <div className="w-14 h-14 bg-indigo-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
-                 <i className="fa-solid fa-bullseye-arrow text-2xl"></i>
-              </div>
-              <div className="space-y-4">
-                <h3 className="text-2xl font-black tracking-tight">Our Mission</h3>
-                <p className="text-slate-400 text-base leading-relaxed font-medium">
-                  At AuthentiWrite, our mission is to support academic growth by combining advanced AI technology with a commitment to integrity and education. We aim to empower users to express ideas effectively, develop strong writing techniques, and cultivate originality in their work. By focusing on learning rather than shortcuts, AuthentiWrite ensures that every user can build confidence in their writing while respecting institutional expectations.
-                </p>
-              </div>
-           </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
+          <div className="bg-white p-10 sm:p-12 rounded-[3rem] border border-slate-200 shadow-xl space-y-6 flex flex-col justify-center">
+            <p className="text-lg text-slate-700 leading-relaxed font-medium">
+              Welcome to AuthentiWrite, your AI-powered companion for improving academic writing with clarity, originality, and confidence. Designed for students, researchers, and lifelong learners, AuthentiWrite provides intuitive tools that guide you in refining essays, reports, and other academic work, all while fostering responsible learning habits. With real-time feedback, insightful suggestions, and easy-to-understand guidance, our platform helps you enhance your writing skills without compromising ethical standards.
+            </p>
+            <div className="flex items-center gap-4 pt-4">
+              <a href="mailto:authentiwrite@gmail.com" className="px-6 py-3 bg-indigo-600 text-white rounded-xl font-black text-sm uppercase tracking-widest flex items-center gap-3 hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200">
+                <i className="fa-solid fa-envelope"></i>
+                Contact Us
+              </a>
+              <span className="text-slate-400 font-bold text-sm">authentiwrite@gmail.com</span>
+            </div>
+          </div>
 
-           <div className="bg-white p-12 rounded-[3.5rem] border border-slate-200 shadow-sm space-y-8 hover:shadow-xl transition-all">
-              <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600">
-                 <i className="fa-solid fa-gem text-2xl"></i>
-              </div>
-              <div className="space-y-4">
-                <h3 className="text-2xl font-black tracking-tight text-slate-900">Core Values</h3>
-                <p className="text-slate-500 text-base leading-relaxed font-medium">
-                  Our core values are centered on transparency, trustworthiness, and ethical AI use. We believe that technology should augment human learning, not replace it, and that responsible academic practices are essential to personal and professional development. AuthentiWrite encourages critical thinking, ethical research practices, and thoughtful reflection, making it a reliable companion for anyone seeking to improve their writing skills.
-                </p>
-              </div>
-           </div>
-        </div>
+          <div className="bg-slate-900 text-white p-10 sm:p-12 rounded-[3rem] shadow-2xl space-y-6 flex flex-col justify-center">
+            <h3 className="text-2xl font-black tracking-tight text-indigo-400 uppercase">Mission & Growth</h3>
+            <p className="text-slate-300 leading-relaxed font-medium">
+              At AuthentiWrite, our mission is to support academic growth by combining advanced AI technology with a commitment to integrity and education. We aim to empower users to express ideas effectively, develop strong writing techniques, and cultivate originality in their work. By focusing on learning rather than shortcuts, AuthentiWrite ensures that every user can build confidence in their writing while respecting institutional expectations.
+            </p>
+          </div>
 
-        <div className="bg-slate-900 p-12 sm:p-20 rounded-[4rem] text-center space-y-10 relative overflow-hidden shadow-2xl">
-           <div className="absolute inset-0 bg-gradient-to-br from-indigo-600/20 to-transparent"></div>
-           <div className="relative z-10 space-y-8">
-              <h3 className="text-3xl sm:text-4xl font-black text-white tracking-tight">Academic Integrity & Excellence</h3>
-              <p className="text-lg text-slate-300 max-w-4xl mx-auto leading-relaxed font-medium">
-                By integrating AI assistance with these principles, AuthentiWrite creates a safe and supportive environment where students and researchers can explore, learn, and excel. Whether you are drafting your first essay or polishing an advanced research paper, our platform is designed to help you achieve your best results while maintaining the highest standards of academic integrity.
-              </p>
-              <div className="flex flex-wrap justify-center gap-6 pt-4">
-                 {['Transparency', 'Trustworthiness', 'Ethical AI', 'Originality'].map((tag, i) => (
-                   <div key={i} className="px-8 py-3 bg-white/5 border border-white/10 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400">
-                      {tag}
-                   </div>
-                 ))}
-              </div>
-           </div>
+          <div className="bg-indigo-50/50 border border-indigo-100 p-10 sm:p-12 rounded-[3rem] space-y-6 flex flex-col justify-center">
+            <h3 className="text-2xl font-black tracking-tight text-indigo-700 uppercase">Core Values</h3>
+            <p className="text-slate-600 leading-relaxed font-medium">
+              Our core values are centered on transparency, trustworthiness, and ethical AI use. We believe that technology should augment human learning, not replace it, and that responsible academic practices are essential to personal and professional development. AuthentiWrite encourages critical thinking, ethical research practices, and thoughtful reflection, making it a reliable companion for anyone seeking to improve their writing skills.
+            </p>
+          </div>
+
+          <div className="bg-white p-10 sm:p-12 rounded-[3rem] border border-slate-200 shadow-xl space-y-6 flex flex-col justify-center">
+            <h3 className="text-2xl font-black tracking-tight text-slate-900 uppercase">Safe Environment</h3>
+            <p className="text-slate-500 leading-relaxed font-medium">
+              By integrating AI assistance with these principles, AuthentiWrite creates a safe and supportive environment where students and researchers can explore, learn, and excel. Whether you are drafting your first essay or polishing an advanced research paper, our platform is designed to help you achieve your best results while maintaining the highest standards of academic integrity.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -497,7 +455,7 @@ const App: React.FC = () => {
                 <h6 className="text-[11px] font-black uppercase tracking-[0.25em] text-slate-900">Contact</h6>
                 <ul className="space-y-4">
                    <li>
-                      <a href="mailto:authentiwrite@gmail.com" className="text-indigo-600 hover:text-indigo-700 flex items-center gap-2 transition-colors">
+                      <a href="mailto:authentiwrite@gmail.com" className="text-indigo-600 hover:text-indigo-700 flex items-center gap-2 transition-colors font-bold">
                          <i className="fa-solid fa-envelope"></i>
                          authentiwrite@gmail.com
                       </a>
