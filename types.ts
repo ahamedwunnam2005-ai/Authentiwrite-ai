@@ -16,7 +16,7 @@ export interface AnalysisSegment {
   category: SegmentCategory;
   feedback: string;
   reflectiveQuestion: string;
-  fixSuggestion: string; // New field for actionable "how to fix" advice
+  fixSuggestion: string;
 }
 
 export interface AnalysisMetrics {
@@ -24,6 +24,7 @@ export interface AnalysisMetrics {
   specificity: number;  // 0-100
   originality: number;  // 0-100
   toneBalance: number;  // 0-100
+  linguisticDepth: number; // 0-100 - New Metric
 }
 
 export interface EssayRating {
@@ -37,12 +38,13 @@ export interface ExplainabilityData {
   specificityReasoning: string;
   originalityReasoning: string;
   toneReasoning: string;
+  richnessReasoning: string; // New field
   topContributingFactors: string[];
 }
 
 export interface AnalysisResult {
   overallScore: number;
-  aiInfluence: number; // New: 0-100 explicit AI detection score
+  aiInfluence: number;
   label: AuthenticityLabel;
   confidence: number;
   metrics: AnalysisMetrics;

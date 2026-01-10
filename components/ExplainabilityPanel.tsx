@@ -60,11 +60,11 @@ const ExplainabilityPanel: React.FC<ExplainabilityPanelProps> = ({ data, metrics
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Tone Balance</span>
-                  <span className="text-xs font-mono font-bold text-blue-400">{metrics.toneBalance}%</span>
+                  <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Linguistic Depth</span>
+                  <span className="text-xs font-mono font-bold text-blue-400">{metrics.linguisticDepth}%</span>
                 </div>
                 <p className="text-sm text-slate-300 leading-relaxed font-medium">
-                  {data.toneReasoning}
+                  {data.richnessReasoning}
                 </p>
               </div>
             </div>

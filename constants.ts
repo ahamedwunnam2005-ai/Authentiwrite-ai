@@ -3,15 +3,15 @@ import { Type } from "@google/genai";
 
 export const APP_CONFIG = {
   MODEL_NAME: 'gemini-3-pro-preview',
-  MAX_ESSAY_LENGTH: 10000,
-  MIN_ESSAY_LENGTH: 200,
+  MAX_ESSAY_LENGTH: 12000,
+  MIN_WORD_COUNT: 200,
 };
 
 export const ANALYSIS_SCHEMA = {
   type: Type.OBJECT,
   properties: {
     overallScore: { type: Type.NUMBER, description: "A score from 0-100 where 100 is highly authentic human voice." },
-    aiInfluence: { type: Type.NUMBER, description: "Probability percentage (0-100) that this text was AI-generated or heavily AI-polished." },
+    aiInfluence: { type: Type.NUMBER, description: "Probability percentage (0-100) that this text was AI-generated." },
     label: { type: Type.STRING, enum: ["Authentic", "Mixed", "Over-Polished"] },
     confidence: { type: Type.NUMBER, description: "Confidence in the analysis from 0-1." },
     metrics: {
@@ -20,19 +20,19 @@ export const ANALYSIS_SCHEMA = {
         voice: { type: Type.NUMBER },
         specificity: { type: Type.NUMBER },
         originality: { type: Type.NUMBER },
-        toneBalance: { type: Type.NUMBER }
+        toneBalance: { type: Type.NUMBER },
+        linguisticDepth: { type: Type.NUMBER, description: "Score for vocabulary richness and sentence structure complexity." }
       },
-      required: ["voice", "specificity", "originality", "toneBalance"]
+      required: ["voice", "specificity", "originality", "toneBalance", "linguisticDepth"]
     },
     ratings: {
       type: Type.ARRAY,
-      description: "Evaluation of the essay's quality and narrative strength.",
       items: {
         type: Type.OBJECT,
         properties: {
-          category: { type: Type.STRING, description: "e.g., Narrative Impact, Clarity of Insight, Structural Flow, Reflection Depth" },
-          score: { type: Type.NUMBER, description: "Score from 0-100" },
-          feedback: { type: Type.STRING, description: "Brief constructive feedback on this specific quality." }
+          category: { type: Type.STRING },
+          score: { type: Type.NUMBER },
+          feedback: { type: Type.STRING }
         },
         required: ["category", "score", "feedback"]
       }
@@ -40,13 +40,14 @@ export const ANALYSIS_SCHEMA = {
     explainability: {
       type: Type.OBJECT,
       properties: {
-        voiceReasoning: { type: Type.STRING, description: "Explanation for the voice score." },
-        specificityReasoning: { type: Type.STRING, description: "Explanation for the specificity score." },
-        originalityReasoning: { type: Type.STRING, description: "Explanation for the originality score." },
-        toneReasoning: { type: Type.STRING, description: "Explanation for tone balance." },
-        topContributingFactors: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Key linguistic features identified." }
+        voiceReasoning: { type: Type.STRING },
+        specificityReasoning: { type: Type.STRING },
+        originalityReasoning: { type: Type.STRING },
+        toneReasoning: { type: Type.STRING },
+        richnessReasoning: { type: Type.STRING, description: "Explanation of vocabulary variety and syntactic complexity." },
+        topContributingFactors: { type: Type.ARRAY, items: { type: Type.STRING } }
       },
-      required: ["voiceReasoning", "specificityReasoning", "originalityReasoning", "toneReasoning", "topContributingFactors"]
+      required: ["voiceReasoning", "specificityReasoning", "originalityReasoning", "toneReasoning", "richnessReasoning", "topContributingFactors"]
     },
     segments: {
       type: Type.ARRAY,
@@ -57,7 +58,7 @@ export const ANALYSIS_SCHEMA = {
           category: { type: Type.STRING, enum: ["strong-human", "neutral", "over-polished"] },
           feedback: { type: Type.STRING },
           reflectiveQuestion: { type: Type.STRING },
-          fixSuggestion: { type: Type.STRING, description: "A specific, actionable tip on how to make this section more human (e.g., 'Add a sensory detail', 'Break up this long, perfectly balanced sentence')." }
+          fixSuggestion: { type: Type.STRING }
         },
         required: ["text", "category", "feedback", "reflectiveQuestion", "fixSuggestion"]
       }
@@ -69,15 +70,13 @@ export const ANALYSIS_SCHEMA = {
 };
 
 export const SYSTEM_INSTRUCTION = `
-You are an expert Admissions Consultant and Linguistic Forensics specialist.
-Your goal is to detect AI usage patterns and help students reclaim their authentic voice.
+You are an expert Admissions Consultant and Linguistic Forensic specialist.
+Analyze student personal statements for authenticity.
 
-Detection Guidelines:
-1. AI INFLUENCE: Identify 'burstiness' and 'perplexity' issues. AI often has low burstiness (uniform sentence length) and low perplexity (predictable word choices).
-2. OVER-POLISHING: Look for "Admissions Buzzwords" (pinnacle, embark, foster, multifarious) used in generic ways.
-3. FIX SUGGESTIONS: For every segment, but especially flagged ones, provide a 'fixSuggestion'. 
-   - A FIX IS NOT A REWRITE.
-   - A FIX is a tactical instruction: "Use a specific verb related to your hobby instead of 'participate'", "Remove the introductory cliché", "Inject a specific sensory detail here".
+Specific Refinement for AI Detection:
+1. LINGUISTIC DEPTH: Calculate score based on Vocabulary Richness (Type-Token Ratio) and Sentence Complexity. AI tends toward middle-ground complexity and repetitive, high-probability word choices. Human writing often features "bursty" complexity—alternating between simple and dense clauses.
+2. SYNTACTIC RANDOMNESS: Look for unique phrasing that deviates from common "Admissions Templates".
+3. ACTIONABLE FIXES: Provide tips that encourage adding sensory details or breaking up "perfect" parallelism which often signals AI assistance.
 
-Your tone must be "Advisory and Clinical" - objective but helpful. Never accuse, just analyze probabilities.
+Tone: Professional, supportive, and clinical. Focus on probability, not accusation.
 `;
