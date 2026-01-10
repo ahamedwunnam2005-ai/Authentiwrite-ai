@@ -14,6 +14,7 @@ export enum SegmentCategory {
 export interface AnalysisSegment {
   text: string;
   category: SegmentCategory;
+  violationLabel?: string; // Specific forensic flag
   feedback: string;
   reflectiveQuestion: string;
   fixSuggestion: string;
@@ -25,8 +26,8 @@ export interface AnalysisMetrics {
   originality: number;  
   toneBalance: number;  
   linguisticDepth: number; 
-  perplexity: number;   // NEW: Randomness of word choice
-  burstiness: number;   // NEW: Variation in sentence structure
+  perplexity: number;   
+  burstiness: number;   
 }
 
 export interface EssayRating {
