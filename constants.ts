@@ -2,7 +2,7 @@
 import { Type } from "@google/genai";
 
 export const APP_CONFIG = {
-  MODEL_NAME: 'gemini-3-pro-preview',
+  MODEL_NAME: 'gemini-3-flash-preview',
   MAX_ESSAY_LENGTH: 12000,
   MIN_WORD_COUNT: 200,
 };
